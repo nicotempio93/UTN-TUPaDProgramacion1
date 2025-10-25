@@ -1,3 +1,7 @@
+''' 
+    Hola! En el TP, dice practico 6, pero yo los venia cargando mal!
+    Asi que lo dejo como practico por la dudas, para no cambiarles nada a ustedes!'''
+
 #1
 
 precios_frutas = {'Banana': 1200, 'Ananá': 2500, 'Melón': 3000, 'Uva':
