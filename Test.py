@@ -1,10 +1,11 @@
-def calcular_promedio(a, b, c):
-    promedio = (a + b + c) / 3
-    return promedio
+pais_capital = {'Argentina': 'Buenos Aires', 'Brasil': 'Brasília', 'Colombia': 'Bogotá', 
+                'Chile': 'Santiago', 'Perú': 'Lima'}
 
-input_a = float(input("Ingrese el primer número: "))
-input_b = float(input("Ingrese el segundo número: "))
-input_c = float(input("Ingrese el tercer número: "))
+capital_pais = {}
 
-promedio = calcular_promedio(input_a, input_b, input_c)
-print(f"El promedio de los tres números es: {promedio}")
+for pais in pais_capital:
+    capital = pais_capital[pais]
+    capital_pais[capital] = pais
+
+print(f"Diccionario original (país: capital):{pais_capital}")
+print(f"Diccionario invertido (capital: país): {capital_pais}")
