@@ -1,0 +1,5 @@
+Producto,Precio,Cantidad
+Heladera,120000.0,10
+Lavarropas,80000.0,15
+Televisor,60000.0,20
+celular,50000.0,90

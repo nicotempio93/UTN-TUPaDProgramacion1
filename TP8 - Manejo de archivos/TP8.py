@@ -1,4 +1,3 @@
-#1 Manejo de archivos en Python Creare archvo productos.txt con tren productos nombre,precio,cantidad
 
 def crear_archivo_productos(nombre_archivo):
     with open(nombre_archivo, 'w') as archivo:
@@ -11,7 +10,7 @@ def crear_archivo_productos(nombre_archivo):
 crear_archivo_productos('productos.txt')
 
 opcion = 0
-prodcuto_en_memoria = None
+prodcutos_en_memoria = None
 
 print("Menú de opciones:")
 while True:
@@ -50,7 +49,7 @@ while True:
                     productos.append(producto)
             print(productos)
             #Mantenemos en memoria para guardar despues
-            prodcuto_en_memoria = productos
+            prodcutos_en_memoria = productos
         case 4:
             nombre_buscar = input("Ingrese el nombre del producto a buscar: ")
             encontrado = False
@@ -65,11 +64,11 @@ while True:
             if not encontrado:
                 print("Producto no encontrado.")
         case 5:
-            if prodcuto_en_memoria is None:
+            if prodcutos_en_memoria is None:
               print("No hay cambios para guardar. Por favor, cargue los productos primero (opción 3).")
             else:
                 with open('productos.txt', 'w') as archivo:
                     archivo.write("Producto,Precio,Cantidad\n")
-                    for producto in prodcuto_en_memoria:
+                    for producto in prodcutos_en_memoria:
                         archivo.write(f"{producto['nombre']},{producto['precio']},{producto['cantidad']}\n")
                 print("Cambios guardados exitosamente.")
