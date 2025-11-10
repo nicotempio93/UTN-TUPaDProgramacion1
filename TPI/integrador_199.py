@@ -179,7 +179,7 @@ def menu_orden():
 # Main
 # ---------------------------------------------------------------------
 def main():
-    archivoCSV = "./paises.csv"
+    archivoCSV = "/paises.csv"
     paises = cargar_csv(archivoCSV)
     if not paises:
       print_error("No hay datos. Revisá el CSV.")
