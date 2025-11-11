@@ -4,6 +4,9 @@
 # Validación
 # --------------------------------------------------------------------
 
+from pathlib import Path
+import os
+
 def pedir_int(mensaje: str, permitir_vacio: bool = False):
   while True:
     valor = input(mensaje).strip()
@@ -28,13 +31,24 @@ def mostrar_paises(paises: list[dict]):
 def print_error(mensaje="Opción inválida. Vuelva a intentarlo..."): # Mensaje de error genérico pero reutilizable.
   return print(mensaje)
 
+def pais_existe(paises: list[dict], nombre: str):
+  nombre = nombre.strip().lower()
+  for pais in paises:
+    if pais["nombre"].lower() == nombre:
+      return True
+  return False
+
+def primer_mayuscula(texto: str):
+ return texto.strip().lower().title()
+
+arr_conttinentes =["America", "Europa", "Asia", "Africa", "Oceania", "Antartida"] #Defino los continentes aca porque no van a cambiar
 # ---------------------------------------------------------------------
 # Carga de CSV
 # ---------------------------------------------------------------------
 def cargar_csv(rutaArchivo: str):
   paises = []
   try:
-    with open(rutaArchivo, "r") as archivo:
+    with open(rutaArchivo, "r", encoding="utf-8", newline="") as archivo:
       header = archivo.readline().strip().split(",")
       esperado = ["nombre", "poblacion", "superficie", "continente"]
       if [palabra.lower() for palabra in header] != esperado:
@@ -146,7 +160,9 @@ def menu_principal():
   print("2) Filtrar países")
   print("3) Ordenar países")
   print("4) Estadísticas")
-  print("5) Salir\n")
+  print("5) Agregar Pais")
+  print("6) Actualizar Pais")
+  print("7) Salir")
   return input("Opción: ").strip()
 
 def menu_filtros():
@@ -179,7 +195,13 @@ def menu_orden():
 # Main
 # ---------------------------------------------------------------------
 def main():
-    archivoCSV = "/paises.csv"
+    # Resolver ruta al CSV relativa al archivo .py (Windows/Linux/macOS)
+    base_dir = Path(__file__).resolve().parent
+    archivoCSV = str(base_dir / "paises.csv")
+    if not Path(archivoCSV).exists():
+        print_error(f"ERROR: No se encontró el archivo CSV en: {archivoCSV}")
+        print("Sugerencias: coloque 'paises.csv' en la misma carpeta que este .py o actualice la ruta.")
+        return
     paises = cargar_csv(archivoCSV)
     if not paises:
       print_error("No hay datos. Revisá el CSV.")
@@ -237,6 +259,72 @@ def main():
         for continente, cantidadPaises in cuenta.items():
           print(f" - {continente}: {cantidadPaises}")
       elif opcion == "5":
+        print("\n-- Agregar País --")
+        nombre = primer_mayuscula(input("Nombre: "))
+        if nombre == "":
+          print("El nombre no puede estar vacío. Operación cancelada.")
+          continue
+        elif pais_existe(paises, nombre):
+          print_error(f"El país '{nombre}' ya existe. Operación cancelada.")
+          continue
+        else:
+          poblacion = pedir_int("Población: ")
+          superficie = pedir_int("Superficie: ")
+          continente = primer_mayuscula(input("Continente: "))
+          while True:
+            if continente not in arr_conttinentes:
+              print_error(f"Continente inválido. Los continentes válidos son: {', '.join(arr_conttinentes)}. Intente nuevamente.")
+              continente = primer_mayuscula(input("Continente: "))
+            else:
+              break
+          paises.append({
+            "nombre": nombre,
+            "poblacion": poblacion,
+            "superficie": superficie,
+            "continente": continente
+          })
+          actuales = paises[:]
+          #Ahora guardamos el nuevo pais en el CSV
+          with open(archivoCSV, "a", encoding="utf-8", newline="") as archivo:
+            archivo.write(f"\n{nombre},{poblacion},{superficie},{continente}")
+          print(f"País '{nombre}' agregado exitosamente.")
+      elif opcion == "6":
+        print("\n-- Actualizar País --")
+        nombre = primer_mayuscula(input("Nombre del país a actualizar: "))
+        if not pais_existe(paises, nombre):
+          print_error(f"El país '{nombre}' no existe. Operación cancelada.")
+          continue
+        for pais in paises:
+          if pais["nombre"].lower() == nombre.lower():
+            print("Que valor desea actualizar?")
+            print("1) Población")
+            print("2) Superficie")
+            print("3) Continente")
+            opcionActualizar = input("Opción: ").strip()
+            if opcionActualizar == "1":
+              nueva_poblacion = pedir_int("Nueva Población: ")
+              pais["poblacion"] = nueva_poblacion
+            elif opcionActualizar == "2":
+              nueva_superficie = pedir_int("Nueva Superficie: ")
+              pais["superficie"] = nueva_superficie
+            elif opcionActualizar == "3":
+              nuevo_continente = primer_mayuscula(input("Cambiar Continente: "))
+              while True:
+                if nuevo_continente not in arr_conttinentes:
+                  print_error(f"Continente inválido. Los continentes válidos son: {', '.join(arr_conttinentes)}. Intente nuevamente.")
+                  nuevo_continente = primer_mayuscula(input("Continente: "))
+                else:
+                  break
+              pais["continente"] = nuevo_continente
+            break
+        # Ahora guardamos los cambios en el CSV sobrescribiendo todo el archivo
+        with open(archivoCSV, "w", encoding="utf-8", newline="") as archivo:
+          archivo.write("nombre,poblacion,superficie,continente\n")
+          for pais in paises:
+            archivo.write(f"{pais['nombre']},{pais['poblacion']},{pais['superficie']},{pais['continente']}\n")
+        actuales = paises[:]
+        print(f"País '{nombre}' actualizado exitosamente.")
+      elif opcion == "7":
         print("¡Saliendo del programa!")
         break
       else:
